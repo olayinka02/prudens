@@ -32,15 +32,15 @@ export default function Home() {
                 </p>
               </div>
 
-              <div className="space-x-4">
+              <div className="flex flex-row gap-4">
                 <Link href="/send">
-                  <Button size="lg" className="gap-2">
+                  <Button size="lg"  >
                     <Send className="h-4 w-4" />
                     Send Now
                   </Button>
                 </Link>
                 <Link href="/how-it-works">
-                  <Button className="border border-primary" variant="outline" size="lg">
+                  <Button size="lg" className="border border-primary " variant="outline" >
                   <span className="text-primary">
                     Learn More
                     </span>
@@ -48,7 +48,7 @@ export default function Home() {
                 </Link>
               </div>
 
-              <div className="bg-[#1F2F4B] w-3xl sm:w-5xl md:w-7xl lg:w-2/3 rounded-md">
+              <div className="bg-[#D0EEFC] dark:bg-[#1F2F4B] w-3xl sm:w-5xl md:w-7xl lg:w-2/3 rounded-md">
                 <Image src={anosendImage} alt="landing-image" height={300} className="float-right"/>
               </div>
             </div>
