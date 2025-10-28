@@ -53,6 +53,28 @@
   }
 }
 
+
+/* Light mode */
+.Toastify__toast-theme--light {
+  --toastify-color-success: #4caf50;
+  --toastify-color-error: #f44336;
+  --toastify-color-info: #2196f3;
+  --toastify-color-warning: #ff9800;
+  --toastify-text-color-light: #222;
+  --toastify-color-light: #ffffff;
+}
+
+/* Dark mode */
+.Toastify__toast-theme--dark {
+  --toastify-color-success: #81c784;
+  --toastify-color-error: #ff8585;
+  --toastify-color-info: #64b5f6;
+  --toastify-color-warning: #ffb74d;
+  --toastify-text-color-dark: #f1f1f1;
+  --toastify-color-dark: #1e1e1e;
+}
+
+
 @layer base {
   * {
     @apply border-border;

@@ -17,7 +17,7 @@ import {
   LogOut,
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
-import ProtectedRoute from "../app-components/protectedroute"
+import ProtectedRoute from "./app-components/protectedroute"
 
 
 
