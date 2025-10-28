@@ -4,13 +4,13 @@ import { Jost } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { ThemeToggle } from "../app/app-components/theme-toggle"
+import ToastProvider from "./app-components/ToastProvider"
 
 const jost = Jost({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "AnonSend - Anonymous Money Transfer",
   description: "Send money anonymously with trust and security",
-  generator: "v0.dev",
 }
 
 export default function RootLayout({
@@ -22,6 +22,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={jost.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ToastProvider />
           {children}
           <ThemeToggle /> 
         </ThemeProvider>

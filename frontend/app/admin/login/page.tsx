@@ -13,9 +13,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react"
 import Header from "../../app-components/header"
+import api from "../utils/api"
+import { handleError } from "@/app/app-components/errorHandling"
+import { toast } from "react-toastify"
+import LoadingBtn from "../app-components/Loadingbtn"
 
 const formSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address" }),
+  username: z.string().min(3, { message: "Username must be at least 3 characters" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
 })
 
@@ -27,7 +31,7 @@ export default function AdminLoginPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
+      username: "",
       password: "",
     },
   })
@@ -38,8 +42,8 @@ export default function AdminLoginPage() {
 
     try {
       // Call the JWT authentication API
-      const response = await axios.post("/api/admin/login", {
-        email: values.email,
+      const response = await api.post("/auth/login", {
+        username: values.username,
         password: values.password,
       }, {
         withCredentials: true, // Important: include cookies for JWT
@@ -47,13 +51,15 @@ export default function AdminLoginPage() {
 
       if (response.data.success) {
         // Login successful, redirect to admin dashboard
+        toast.success("Logged in successfully!")
         router.push("/admin")
         router.refresh() // Refresh to update auth state
       } else {
-        setError(response.data.error || "Invalid email or password")
+        setError(response.data.error || "Invalid username or password")
       }
     } catch (error: any) {
-      console.error("Login error:", error)
+      handleError(error)
+      
       const errorMessage = error.response?.data?.error || "An error occurred during login. Please try again."
       setError(errorMessage)
     } finally {
@@ -66,28 +72,23 @@ export default function AdminLoginPage() {
       <Header type="logo-only" />
       <div className="min-h-screen flex items-center justify-center px-4 py-24">
         <Card className="w-full max-w-md">
-          <CardHeader className="space-y-1">
+          <CardHeader className="space-y-1 p-5">
             <CardTitle className="text-2xl font-bold">Admin Login</CardTitle>
             <CardDescription>Enter your credentials to access the admin dashboard</CardDescription>
           </CardHeader>
           <CardContent>
-            {error && (
-              <Alert variant="destructive" className="mb-6">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
+          
 
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
                   control={form.control}
-                  name="email"
+                  name="username"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>Username</FormLabel>
                       <FormControl>
-                        <Input placeholder="admin@example.com" type="email" {...field} />
+                        <Input placeholder="Enter your username" type="text" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -107,22 +108,23 @@ export default function AdminLoginPage() {
                     </FormItem>
                   )}
                 />
+                <br/>
 
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Signing in..." : "Sign In"}
+                <Button type="submit" size={"sm"} className="w-full" disabled={isLoading}>
+                  {isLoading ? <LoadingBtn loadingText="Signing in..." /> : "Sign In"}
                 </Button>
 
                 {/* Development Credentials Info */}
-                {process.env.NODE_ENV === "development" && (
+                {/* {process.env.NODE_ENV === "development" && (
                   <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-xs dark:border-amber-800 dark:bg-amber-950">
                     <p className="font-semibold text-amber-900 dark:text-amber-100">
                       Development Mode
                     </p>
                     <p className="mt-1 text-amber-800 dark:text-amber-200">
-                      Default credentials: admin@anonsend.com / admin123
+                      Default credentials: admin / admin123
                     </p>
                   </div>
-                )}
+                )} */}
               </form>
             </Form>
           </CardContent>
