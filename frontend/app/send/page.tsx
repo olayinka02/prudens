@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import axios from "axios"
+import { useBanks, useVerifyAccount, useInitiatePayment } from "@/lib/hooks"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
@@ -18,6 +18,7 @@ import { InfoIcon, CheckCircle2, Loader2, XCircle, Check, ChevronsUpDown } from 
 import { cn } from "@/lib/utils"
 import Header from "../app-components/header"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { toast } from "react-toastify"
 
 const formSchema = z.object({
   amount: z.string().refine(
@@ -41,14 +42,14 @@ interface Bank {
 }
 
 export default function SendPage() {
-  const [isLoading, setIsLoading] = useState(false)
-  const [banks, setBanks] = useState<Bank[]>([])
-  const [isFetchingBanks, setIsFetchingBanks] = useState(true)
-  const [open, setOpen] = useState(false)
   const [accountName, setAccountName] = useState<string | null>(null)
-  const [isVerifying, setIsVerifying] = useState(false)
   const [verificationError, setVerificationError] = useState<string | null>(null)
   const router = useRouter()
+
+  // TanStack Query hooks
+  const { data: banks = [], isLoading: isFetchingBanks } = useBanks()
+  const verifyAccountMutation = useVerifyAccount()
+  const initiatePaymentMutation = useInitiatePayment()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -66,114 +67,61 @@ export default function SendPage() {
   const bank = form.watch("bank")
   const accountNumber = form.watch("accountNumber")
 
-  // Fetch list of Nigerian banks from Paystack API
-  useEffect(() => {
-   const fetchBanks = async () => {
-  try {
-    setIsFetchingBanks(true);
-
-    const response = await axios.get("https://api.paystack.co/bank", {
-      params: {
-        country: "nigeria",
-      },
-    });
-
-    if (response.data.status && response.data.data) {
-      // Sort banks alphabetically by name
-      const sortedBanks = response.data.data.sort(
-        (a: Bank, b: Bank) => a.name.localeCompare(b.name)
-      );
-
-      // ✅ Remove duplicates by bank code
-      const uniqueBanks = sortedBanks.filter(
-        (bank: Bank, index: number, self: Bank[]) =>
-          index === self.findIndex((b: Bank) => b.code === bank.code)
-      );
-
-      setBanks(uniqueBanks);
-    }
-  } catch (error) {
-    console.error("Error fetching banks:", error);
-
-    // Fallback to a minimal list if API fails
-    setBanks([
-      { id: 1, name: "Access Bank", code: "044" },
-      { id: 2, name: "GTBank", code: "058" },
-      { id: 3, name: "First Bank of Nigeria", code: "011" },
-      { id: 4, name: "Zenith Bank", code: "057" },
-      { id: 5, name: "UBA", code: "033" },
-    ]);
-  } finally {
-    setIsFetchingBanks(false);
-  }
-};
-
-
-    fetchBanks()
-  }, [])
-
   // Verify account name when bank and account number are valid
   useEffect(() => {
-    const verifyAccount = async () => {
-      // Reset states
-      setAccountName(null)
-      setVerificationError(null)
+    // Reset states
+    setAccountName(null)
+    setVerificationError(null)
 
-      // Check if both bank and account number are provided
-      if (!bank || !accountNumber || accountNumber.length !== 10) {
-        return
-      }
-
-      setIsVerifying(true)
-
-      try {
-        // Call backend API to verify account
-        const response = await axios.post("/api/verify-account", {
-          bankCode: bank,
-          accountNumber: accountNumber,
-        })
-
-        if (response.data.success && response.data.accountName) {
-          setAccountName(response.data.accountName)
-          setVerificationError(null)
-        } else {
-          setVerificationError("Could not verify account")
-        }
-      } catch (error: any) {
-        console.error("Account verification error:", error)
-        setVerificationError(
-          error.response?.data?.message || "Failed to verify account. Please check details."
-        )
-      } finally {
-        setIsVerifying(false)
-      }
+    // Check if both bank and account number are provided
+    if (!bank || !accountNumber || accountNumber.length !== 10) {
+      return
     }
 
     // Debounce the verification to avoid too many API calls
-    const timeoutId = setTimeout(verifyAccount, 500)
+    const timeoutId = setTimeout(() => {
+      verifyAccountMutation.mutate(
+        {
+          accountNumber,
+          bankCode: bank,
+        },
+        {
+          onSuccess: (data) => {
+            setAccountName(data.accountName)
+            setVerificationError(null)
+          },
+          onError: (error: any) => {
+            setVerificationError(
+              error.message || "Failed to verify account. Please check details."
+            )
+          },
+        }
+      )
+    }, 500)
 
     return () => clearTimeout(timeoutId)
-  }, [bank, accountNumber])
+  }, [bank, accountNumber, verifyAccountMutation])
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true)
-
-    try {
-      const response = await axios.post("/api/send", values)
-
-      if (response.data.token) {
-        // Redirect to payment page with session token
-        router.push(`/payment?token=${response.data.token}`)
-      } else {
-        throw new Error(response.data.message || "Failed to initiate transfer")
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    initiatePaymentMutation.mutate(
+      {
+        amount: Number.parseFloat(values.amount),
+        recipientBank: values.bank,
+        recipientAccountNumber: values.accountNumber,
+        recipientAccountName: accountName || "",
+        senderNote: values.personalNote,
+        email: values.email || undefined,
+      },
+      {
+        onSuccess: (data) => {
+          // Redirect to payment page with session token
+          router.push(`/payment?token=${data.sessionToken}`)
+        },
+        onError: (error: any) => {
+          toast.error(error.message || "Failed to initiate transfer")
+        },
       }
-    } catch (error: any) {
-      console.error("Error:", error)
-      // Handle error state - could show a toast or error message
-      alert(error.response?.data?.message || "Failed to initiate transfer")
-    } finally {
-      setIsLoading(false)
-    }
+    )
   }
 
   return (
@@ -254,26 +202,26 @@ export default function SendPage() {
                       </FormControl>
 
                       {/* Account Name Verification Display */}
-                      {isVerifying && (
+                      {/* {verifyAccountMutation.isPending && (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
                           <Loader2 className="h-4 w-4 animate-spin" />
                           <span className="text-[0.72rem]">Verifying account...</span>
                         </div>
-                      )}
-
-                      {accountName && !isVerifying && (
+                      )} */}
+{/* 
+                      {accountName && !verifyAccountMutation.isPending && (
                         <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-500 mt-2">
                           <CheckCircle2 className="h-4 w-4" />
                           <span className="font-medium text-[0.72rem]">{accountName}</span>
                         </div>
-                      )}
-
-                      {verificationError && !isVerifying && (
+                      )} */}
+{/* 
+                      {verificationError && !verifyAccountMutation.isPending && (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
                           <XCircle className="h-4 w-4" />
                           <span className="text-[0.72rem]">{verificationError}</span>
                         </div>
-                      )}
+                      )} */}
 
                       <FormMessage />
                     </FormItem>
@@ -330,19 +278,29 @@ export default function SendPage() {
                 )}
               />
 
-              <Button
+              <div className="w-full">
+                 <Button
                 type="submit"
-                className="w-full"
-                disabled={isLoading || isVerifying || (accountNumber.length === 10 && !accountName)}
+                size={"sm"}
+                className="w-auto px-4"
+                // disabled={
+                //   initiatePaymentMutation.isPending ||
+                //   verifyAccountMutation.isPending ||
+                //   (accountNumber.length === 10 && !accountName)
+                // }
               >
-                {isLoading ? "Processing..." : "Continue to Payment"}
+                <span className="text-[0.79rem]">Continue to Payment</span>
+                {/* {initiatePaymentMutation.isPending ? "Processing..." : "Continue to Payment"} */}
               </Button>
 
-              {accountNumber.length === 10 && !accountName && !isVerifying && (
+              </div>
+
+             
+              {/* {accountNumber.length === 10 && !accountName && !verifyAccountMutation.isPending && (
                 <p className="text-sm text-muted-foreground text-left">
                   Please verify the account details before proceeding
                 </p>
-              )}
+              )} */}
             </form>
           </Form>
         </CardContent>

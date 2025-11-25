@@ -5,6 +5,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { ThemeToggle } from "../app/app-components/theme-toggle"
 import ToastProvider from "./app-components/ToastProvider"
+import { QueryProvider } from "./app-components/QueryProvider"
 
 const jost = Jost({ subsets: ["latin"] })
 
@@ -22,9 +23,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={jost.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <ToastProvider />
-          {children}
-          <ThemeToggle /> 
+          <QueryProvider>
+            <ToastProvider />
+            {children}
+            <ThemeToggle />
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>

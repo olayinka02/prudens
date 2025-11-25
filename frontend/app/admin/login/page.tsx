@@ -5,17 +5,14 @@ import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import axios from "axios"
+import { Eye, EyeOff } from "lucide-react"
+
+import { useAdminLogin } from "@/lib/hooks/mutations/useAdminLogin"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertCircle } from "lucide-react"
 import Header from "../../app-components/header"
-import api from "../utils/api"
-import { handleError } from "@/app/app-components/errorHandling"
-import { toast } from "react-toastify"
 import LoadingBtn from "../app-components/Loadingbtn"
 
 const formSchema = z.object({
@@ -24,48 +21,28 @@ const formSchema = z.object({
 })
 
 export default function AdminLoginPage() {
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
-
+  const [showPassword, setShowPassword] = useState(false)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: "",
-      password: "",
-    },
+    defaultValues: { username: "", password: "" },
   })
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true)
-    setError(null)
+  const loginMutation = useAdminLogin()
 
-    try {
-      // Call the JWT authentication API
-      const response = await api.post("/auth/login", {
-        username: values.username,
-        password: values.password,
-      }, {
-        withCredentials: true, // Important: include cookies for JWT
-      })
-
-      if (response.data.success) {
-        // Login successful, redirect to admin dashboard
-        toast.success("Logged in successfully!")
+  function onSubmit(values: z.infer<typeof formSchema>) {
+  loginMutation.mutate(values, {
+    onSuccess: (data) => {
+      if (data?.accessToken) {
+        // Store user info if needed
+        localStorage.setItem("token", data.accessToken)
+        
         router.push("/admin")
-        router.refresh() // Refresh to update auth state
-      } else {
-        setError(response.data.error || "Invalid username or password")
-      }
-    } catch (error: any) {
-      handleError(error)
-      
-      const errorMessage = error.response?.data?.error || "An error occurred during login. Please try again."
-      setError(errorMessage)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+        console.log("i don route")
+      } 
+    },
+  })
+}
 
   return (
     <>
@@ -76,9 +53,8 @@ export default function AdminLoginPage() {
             <CardTitle className="text-2xl font-bold">Admin Login</CardTitle>
             <CardDescription>Enter your credentials to access the admin dashboard</CardDescription>
           </CardHeader>
-          <CardContent>
-          
 
+          <CardContent>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
@@ -102,29 +78,45 @@ export default function AdminLoginPage() {
                     <FormItem>
                       <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter your password" type="password" {...field} />
+                        <div className="relative">
+                          <Input
+                            placeholder="Enter your password"
+                            type={showPassword ? "text" : "password"}
+                            {...field}
+                            className="pr-10"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                            aria-label={showPassword ? "Hide password" : "Show password"}
+                          >
+                            {showPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </button>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <br/>
+                <br />
 
-                <Button type="submit" size={"sm"} className="w-full" disabled={isLoading}>
-                  {isLoading ? <LoadingBtn loadingText="Signing in..." /> : "Sign In"}
+                <Button
+                  type="submit"
+                  size={"sm"}
+                  className="w-full"
+                  disabled={loginMutation.isPending}
+                >
+                  {loginMutation.isPending ? (
+                    <LoadingBtn loadingText="Signing in..." />
+                  ) : (
+                    "Sign In"
+                  )}
                 </Button>
-
-                {/* Development Credentials Info */}
-                {/* {process.env.NODE_ENV === "development" && (
-                  <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-xs dark:border-amber-800 dark:bg-amber-950">
-                    <p className="font-semibold text-amber-900 dark:text-amber-100">
-                      Development Mode
-                    </p>
-                    <p className="mt-1 text-amber-800 dark:text-amber-200">
-                      Default credentials: admin / admin123
-                    </p>
-                  </div>
-                )} */}
               </form>
             </Form>
           </CardContent>
