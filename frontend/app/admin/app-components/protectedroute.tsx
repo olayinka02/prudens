@@ -1,57 +1,20 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useAuthVerify } from "@/lib/hooks/queries/useAuthVerify"
 import { useRouter, usePathname } from "next/navigation"
-import axios from "axios"
 
-interface ProtectedRouteProps {
-  children: React.ReactNode
-}
 
-interface User {
-  userId: string
-  email: string
-  role: string
-}
-
-export default function ProtectedRoute({ children }: ProtectedRouteProps) {
+export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
-  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null)
-  const [user, setUser] = useState<User | null>(null)
 
-  useEffect(() => {
-    // Skip auth check for login page
-    if (pathname.includes("/login")) {
-      setIsAuthorized(true)
-      return
-    }
+  const { data, isLoading, isError } = useAuthVerify()
 
-    // Check for admin authentication with JWT
-    const checkAuth = async () => {
-      try {
-        // Verify token with backend (token is in HTTP-only cookie)
-        const response = await axios.get("/api/admin/verify", {
-          withCredentials: true, // Important: include cookies
-        })
+  // Skip auth check for login page
+  if (pathname.includes("/login")) return <>{children}</>
 
-        if (response.data.authenticated && response.data.user) {
-          setUser(response.data.user)
-          setIsAuthorized(true)
-        } else {
-          router.push("/admin/login")
-        }
-      } catch (error) {
-        console.error("Auth check failed:", error)
-        router.push("/admin/login")
-      }
-    }
-
-    checkAuth()
-  }, [pathname, router])
-
-  // Show loading state while checking authentication
-  if (isAuthorized === null) {
+  // Loading state
+  if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="flex flex-col items-center gap-4">
@@ -62,11 +25,12 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     )
   }
 
-  // Render children if authorized
-  if (isAuthorized) {
-    return <>{children}</>
+  // Handle errors or unauthorized users
+  if (isError || !data?.authenticated) {
+    router.push("/admin/login")
+    return null
   }
 
-  // Return null while redirecting
-  return null
+  // Authorized → render the protected content
+  return <>{children}</>
 }
