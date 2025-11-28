@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the technical workflow for integrating Paystack payment gateway in the AnonSend frontend application. Paystack is used to collect payments from users before initiating anonymous transfers to recipients.
+This document describes the technical workflow for integrating Paystack payment gateway in the Prudens frontend application. Paystack is used to collect payments from users before initiating anonymous transfers to recipients.
 
 ## Architecture Components
 

@@ -1,6 +1,6 @@
 # State Management Documentation
 
-This document explains the state management architecture for the AnonSend application, which uses **Zustand** for UI state management and **TanStack Query (React Query)** for server data fetching and caching.
+This document explains the state management architecture for the Prudens application, which uses **Zustand** for UI state management and **TanStack Query (React Query)** for server data fetching and caching.
 
 ## Table of Contents
 
@@ -78,7 +78,7 @@ if (isAuthenticated) {
 - `login(user)`: Function to set user and mark as authenticated
 - `logout()`: Function to clear user and mark as unauthenticated
 
-**Persistence:** This store is persisted to localStorage under the key `anonsend-auth`.
+**Persistence:** This store is persisted to localStorage under the key `prudens-auth`.
 
 #### 2. Admin Store (`useAdminStore`)
 

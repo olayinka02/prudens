@@ -27,7 +27,7 @@ export const useAuthStore = create<AuthState>()(
       logout: () => set({ user: null, isAuthenticated: false }),
     }),
     {
-      name: "anonsend-auth", // localStorage key
+      name: "prudens-auth", // localStorage key
     }
   )
 )

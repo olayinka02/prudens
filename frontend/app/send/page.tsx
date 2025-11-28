@@ -305,7 +305,7 @@ export default function SendPage() {
           </Form>
         </CardContent>
         <CardFooter className="flex justify-between">
-          <p className="text-sm text-muted-foreground">Secured by AnonSend</p>
+          <p className="text-sm text-muted-foreground">Secured by Prudens</p>
         </CardFooter>
       </Card>
     </div>

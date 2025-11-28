@@ -6,7 +6,7 @@ import { Shield, Send, Eye, Lock, X, Menu } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
-import anosendImage from "../public/anosendImage.svg"
+import prudensImage from "../public/prudensImage.svg"
 import logo from "../public/logo.svg"
 import Header from "./app-components/header";
 import FooterSection from "./app-components/footer";
@@ -26,10 +26,10 @@ export default function Home() {
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
                 <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">
-                  Send Money <span className="text-primary">Anonymously</span>
+                  Turn <span className="text-black/55 dark:text-white/55">Chaos</span> into <span className="text-black/55 dark:text-white/55">Clarity</span>
                 </h1>
                 <p className="mx-auto max-w-[700px] text-muted-foreground md:text-sm lg:text-base">
-                  Transfer funds securely without revealing your identity. Fast, reliable, and private.
+                  Never miss a deadline again. Organize, prioritize, and conquer your tasks effortlessly—so you can focus on what really drives results.
                 </p>
               </div>
 
@@ -50,9 +50,9 @@ export default function Home() {
               </div>
               <br/>
 
-              <div className="bg-[#D0EEFC] dark:bg-[#1F2F4B] w-3xl sm:w-5xl md:w-7xl lg:w-2/3 rounded-md ">
-                <Image src={anosendImage} alt="landing-image" height={300} className="float-right"/>
-              </div>
+              {/* <div className="bg-[#D0EEFC] dark:bg-[#1F2F4B] w-3xl sm:w-5xl md:w-7xl lg:w-2/3 rounded-md ">
+                <Image src={prudensImage} alt="landing-image" height={300} className="float-right"/>
+              </div> */}
             </div>
           </div>
         </section>

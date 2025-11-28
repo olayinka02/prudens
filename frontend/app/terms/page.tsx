@@ -22,8 +22,8 @@ export default function TermsPage() {
           {/* Content */}
           <div className="prose prose-gray max-w-none dark:prose-invert">
             <p className="text-base leading-relaxed text-muted-foreground mb-8">
-              Welcome to <strong>AnonSend</strong>. These Terms of Use govern your access to and use of our
-              anonymous money transfer services. By using AnonSend, you agree to be bound by these terms.
+              Welcome to <strong>Prudens</strong>. These Terms of Use govern your access to and use of our
+              anonymous money transfer services. By using Prudens, you agree to be bound by these terms.
             </p>
 
             <hr className="my-8 border-t border-border" />
@@ -32,7 +32,7 @@ export default function TermsPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold mb-4">1. Eligibility</h2>
               <p className="text-base leading-relaxed text-muted-foreground mb-4">
-                To use AnonSend, you must meet the following requirements:
+                To use Prudens, you must meet the following requirements:
               </p>
               <ul className="list-disc pl-6 space-y-2 text-base text-muted-foreground">
                 <li>Be at least 18 years of age or the legal age of majority in your jurisdiction</li>
@@ -48,7 +48,7 @@ export default function TermsPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold mb-4">2. Use of Our Services</h2>
               <p className="text-base leading-relaxed text-muted-foreground mb-4">
-                <strong>AnonSend</strong> provides anonymous money transfer services within Nigeria. You agree to:
+                <strong>Prudens</strong> provides anonymous money transfer services within Nigeria. You agree to:
               </p>
               <ul className="list-disc pl-6 space-y-2 text-base text-muted-foreground">
                 <li>Use the service only for lawful purposes</li>
@@ -107,7 +107,7 @@ export default function TermsPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold mb-4">6. Intellectual Property</h2>
               <p className="text-base leading-relaxed text-muted-foreground">
-                All content, trademarks, logos, and intellectual property on the AnonSend platform are owned by
+                All content, trademarks, logos, and intellectual property on the Prudens platform are owned by
                 or licensed to us. You may not reproduce, distribute, modify, or create derivative works without
                 our express written permission.
               </p>
@@ -131,7 +131,7 @@ export default function TermsPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold mb-4">8. Warranties and Disclaimers</h2>
               <p className="text-base leading-relaxed text-muted-foreground">
-                AnonSend is provided "as is" without warranties of any kind, either express or implied. We do
+                Prudens is provided "as is" without warranties of any kind, either express or implied. We do
                 not guarantee uninterrupted, error-free, or secure service. While we strive to ensure accurate
                 and timely transfers, we cannot guarantee specific delivery times or outcomes.
               </p>
@@ -143,7 +143,7 @@ export default function TermsPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold mb-4">9. Limitation of Liability</h2>
               <p className="text-base leading-relaxed text-muted-foreground">
-                To the maximum extent permitted by law, AnonSend shall not be liable for any indirect, incidental,
+                To the maximum extent permitted by law, Prudens shall not be liable for any indirect, incidental,
                 special, consequential, or punitive damages arising from your use of the service. Our total liability
                 shall not exceed the amount of the transaction in question.
               </p>
@@ -155,7 +155,7 @@ export default function TermsPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold mb-4">10. Suspension and Termination</h2>
               <p className="text-base leading-relaxed text-muted-foreground mb-4">
-                We reserve the right to suspend or terminate your access to AnonSend at any time if:
+                We reserve the right to suspend or terminate your access to Prudens at any time if:
               </p>
               <ul className="list-disc pl-6 space-y-2 text-base text-muted-foreground">
                 <li>You violate these Terms of Use</li>
@@ -185,7 +185,7 @@ export default function TermsPage() {
               <p className="text-base leading-relaxed text-muted-foreground">
                 We may update these Terms of Use from time to time. We will notify users of material changes
                 by posting the updated terms on our website with a new "Last Updated" date. Your continued use
-                of AnonSend after changes become effective constitutes acceptance of the revised terms.
+                of Prudens after changes become effective constitutes acceptance of the revised terms.
               </p>
             </section>
 
@@ -196,8 +196,8 @@ export default function TermsPage() {
               <h2 className="text-2xl font-bold mb-4">Contact Us</h2>
               <p className="text-base leading-relaxed text-muted-foreground">
                 If you have questions about these Terms of Use, please contact us at{" "}
-                <a href="mailto:support@anonsend.com" className="text-primary hover:underline font-medium">
-                  support@anonsend.com
+                <a href="mailto:support@prudens.com" className="text-primary hover:underline font-medium">
+                  support@prudens.com
                 </a>
               </p>
             </section>

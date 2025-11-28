@@ -22,7 +22,7 @@ export default function PrivacyPage() {
           {/* Content */}
           <div className="prose prose-gray max-w-none dark:prose-invert">
             <p className="text-base leading-relaxed text-muted-foreground mb-8">
-              At <strong>AnonSend</strong>, we are committed to protecting your privacy while providing secure
+              At <strong>Prudens</strong>, we are committed to protecting your privacy while providing secure
               anonymous money transfer services. This Privacy Policy explains how we collect, use, and safeguard
               your information.
             </p>
@@ -133,8 +133,8 @@ export default function PrivacyPage() {
               </ul>
               <p className="text-base leading-relaxed text-muted-foreground mt-4">
                 To exercise these rights, contact us at{" "}
-                <a href="mailto:privacy@anonsend.com" className="text-primary hover:underline font-medium">
-                  privacy@anonsend.com
+                <a href="mailto:privacy@prudens.com" className="text-primary hover:underline font-medium">
+                  privacy@prudens.com
                 </a>
               </p>
             </section>
@@ -191,7 +191,7 @@ export default function PrivacyPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold mb-4">9. Children's Privacy</h2>
               <p className="text-base leading-relaxed text-muted-foreground">
-                AnonSend is not intended for use by individuals under 18 years of age. We do not knowingly
+                Prudens is not intended for use by individuals under 18 years of age. We do not knowingly
                 collect personal information from children. If we become aware that we have collected information
                 from a child, we will take steps to delete it promptly.
               </p>
@@ -219,13 +219,13 @@ export default function PrivacyPage() {
               </p>
               <p className="text-base leading-relaxed text-muted-foreground mt-4">
                 Email:{" "}
-                <a href="mailto:privacy@anonsend.com" className="text-primary hover:underline font-medium">
-                  privacy@anonsend.com
+                <a href="mailto:privacy@prudens.com" className="text-primary hover:underline font-medium">
+                  privacy@prudens.com
                 </a>
                 <br />
                 Support:{" "}
-                <a href="mailto:support@anonsend.com" className="text-primary hover:underline font-medium">
-                  support@anonsend.com
+                <a href="mailto:support@prudens.com" className="text-primary hover:underline font-medium">
+                  support@prudens.com
                 </a>
               </p>
             </section>
